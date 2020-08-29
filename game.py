@@ -57,22 +57,37 @@ def drawBoard():
             if box == "X":
                 screen.blit(crossImg,box_center)
                         
-def checkWinner(board):
+def checkWinner(board, draw = False):
     winner =0 
     for i in range(3):
         if board[i][0]==board[i][1] and board[i][1] == board[i][2]:
             winner = board[i][0]
-            return winner
+            if winner and draw:
+                pygame.draw.lines(screen, (255,0,0), False, [(size/6,
+                    i*size/3+size/6), (size*5/6, i*size/3+size/6 )], 3)
+                return winner
 
     for i in range(3):
         if board[0][i]==board[1][i] and board[1][i] == board[2][i]:
             winner = board[0][i]
-            return winner
+            if winner and draw:
+                pygame.draw.lines(screen, (255,0,0), False,
+                        [(i*size/3+size/6,size/6), (i*size/3+size/6, size*5/6)], 3)
+                return winner
 
     if (board[0][0]== board[1][1]) and (board[1][1]==board[2][2]):
         winner = (board[0][0])
+        if winner and draw:
+            pygame.draw.lines(screen, (255,0,0), False,
+                    [(size/6,size/6), (5*size/6, 5*size/6)], 3)
+            return winner
+
     if (board[0][2]== board[1][1]) and (board[1][1]==board[2][0]):
         winner = (board[0][2])
+        if winner and draw:
+            pygame.draw.lines(screen, (255,0,0), False,
+                    [(5*size/6,size/6), (size/6, 5*size/6)], 3)
+            return winner
 
     if (winner == '') and len(availabeMoves) == 0:
         winner = 'tie'
@@ -102,9 +117,9 @@ def minimax(board, depth, isMaximising):
     result = checkWinner(board)
     if result:
         if result== ai:
-            return 10  
+            return 1  
         elif result == human:
-            return -10
+            return -1
         elif result == 'tie':
             return 0
         
@@ -154,13 +169,13 @@ while running:
                         board[i][j] = human
                         player = ai
                         availabeMoves = getAvailableMoves(board)
-                        winner = checkWinner(board)
+                        winner = checkWinner(board, True)
 
     if(not winner and player == ai):
         (i, j) = getAiMove(board)
         board[i][j] = ai
         player = human
-        winner = checkWinner(board)
+        winner = checkWinner(board, True)
                         
     if winner:
         print('winner is {}'.format(winner))
